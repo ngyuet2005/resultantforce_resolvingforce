@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>力的合成與分解 Resultant & Resolving Forces</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --bg:#f6f9fe; --card:#ffffff; --ink:#0f172a; --muted:#64748b; --line:#dbe5f2;
+  --pri:#2563eb; --pri-soft:#dbeafe; --sin:#16a34a; --sin-soft:#dcfce7; --cos:#ea580c; --cos-soft:#ffedd5;
+}
+*{box-sizing:border-box}
+html{font-size:18px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang HK","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.6}
+body.en .zh{display:none!important}
+body.zh .en{display:none!important}
+.hidden{display:none!important}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 24px;background:#fff;border-bottom:3px solid var(--pri-soft);position:sticky;top:0;z-index:20}
+header h1{margin:0;font-size:1.35rem;color:var(--pri)}
+header small{color:var(--muted);display:block;font-size:.8rem}
+.btn{font:inherit;cursor:pointer;border:2px solid var(--pri);background:#fff;color:var(--pri);padding:6px 16px;border-radius:999px;font-weight:600;transition:.15s}
+.btn:hover{background:var(--pri-soft)}
+.btn.fill{background:var(--pri);color:#fff}
+.btn.fill:hover{background:#1d4ed8}
+.btn.small{padding:3px 12px;font-size:.85rem}
+.btn:disabled{opacity:.4;cursor:default}
+nav{display:flex;gap:8px;padding:12px 24px 0;flex-wrap:wrap}
+nav button{font:inherit;cursor:pointer;border:none;background:#e8f0fc;color:#334155;padding:10px 20px;border-radius:12px 12px 0 0;font-weight:600}
+nav button.on{background:var(--card);color:var(--pri);box-shadow:0 -3px 0 var(--pri) inset}
+main{padding:0 24px 40px}
+.tab{display:none;background:var(--card);border-radius:0 14px 14px 14px;padding:20px;box-shadow:0 4px 18px rgba(30,64,175,.07)}
+.tab.on{display:block}
+.concept{background:#f0f6ff;border-left:6px solid var(--pri);border-radius:10px;padding:10px 18px;margin-bottom:16px}
+.concept p{margin:.3rem 0}
+.grid2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:18px;align-items:start}
+@media(max-width:1000px){.grid2{grid-template-columns:1fr}}
+.card{border:2px solid var(--line);border-radius:14px;padding:14px;background:#fff}
+.card h3{margin:0 0 8px;font-size:1.05rem;color:var(--pri)}
+.stage{position:relative;border:2px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+.stage svg{display:block;width:100%;height:auto;touch-action:none;user-select:none}
+.chip{position:absolute;transform:translate(-50%,-50%);padding:1px 8px;border-radius:8px;font-size:.95rem;background:#fff;border:2px solid #cbd5e1;white-space:nowrap;pointer-events:none;line-height:1.5}
+.chip.sin{border-color:var(--sin);background:var(--sin-soft);color:#14532d}
+.chip.cos{border-color:var(--cos);background:var(--cos-soft);color:#7c2d12}
+.chip.plain{border:none;background:none;text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 4px #fff,0 0 6px #fff}
+.legend{display:flex;gap:10px 18px;flex-wrap:wrap;margin:10px 0 0;font-size:.9rem;align-items:center}
+.sw{display:inline-block;padding:0 10px;border-radius:8px;border:2px solid;font-weight:600}
+.sw.sin{border-color:var(--sin);background:var(--sin-soft);color:#14532d}
+.sw.cos{border-color:var(--cos);background:var(--cos-soft);color:#7c2d12}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+select,input[type=number]{font:inherit;padding:3px 8px;border:2px solid var(--line);border-radius:8px;background:#fff}
+input[type=number]{width:5.2em}
+table.ft{border-collapse:collapse;width:100%;font-size:.92rem}
+table.ft td,table.ft th{padding:4px 4px;text-align:center}
+table.ft th{color:var(--muted);font-weight:600;font-size:.8rem}
+.dot{display:inline-block;width:14px;height:14px;border-radius:50%;margin-right:4px;vertical-align:middle}
+.steps{margin-top:12px;border-top:2px dashed var(--line);padding-top:10px;font-size:.95rem}
+.steps .line{margin:6px 0}
+.steps .ttl{font-weight:700;color:var(--pri);margin-top:10px}
+.ok{background:var(--sin-soft);border:2px solid var(--sin);border-radius:10px;padding:6px 12px;margin:6px 0}
+.note{background:#fff7ed;border:2px solid #fdba74;border-radius:10px;padding:6px 12px;margin:8px 0;font-size:.9rem}
+.ans{background:#eff6ff;border:2px solid var(--pri);border-radius:10px;padding:6px 12px;margin:8px 0}
+.row{display:flex;align-items:center;gap:10px;margin:8px 0;flex-wrap:wrap}
+.row label{min-width:9em}
+input[type=range]{flex:1;min-width:140px;accent-color:var(--pri)}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{font:inherit;cursor:pointer;border:2px solid var(--line);background:#fff;padding:5px 12px;border-radius:10px;font-weight:600;color:#334155}
+.seg button.on{border-color:var(--pri);background:var(--pri-soft);color:var(--pri)}
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.45);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
+.mbox{background:#fff;border-radius:18px;padding:24px;max-width:760px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.mbox h2{margin:0 0 12px;color:var(--pri);font-size:1.2rem}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.opts{grid-template-columns:1fr}}
+.opt{font:inherit;text-align:left;cursor:pointer;border:3px solid var(--line);border-radius:14px;background:#f8fbff;padding:14px;transition:.15s}
+.opt:hover{border-color:var(--pri);background:var(--pri-soft)}
+.opt b{display:block;color:var(--pri);font-size:1.05rem;margin-bottom:4px}
+.opt span.d{font-size:.9rem;color:#475569}
+.qcard{border:2px solid var(--line);border-radius:14px;padding:12px 16px;margin:12px 0}
+.qcard.good{border-color:var(--sin);background:#f4fdf7}
+.qcard.bad{border-color:#ef4444;background:#fff7f7}
+.qhead{font-weight:700;color:var(--pri)}
+.qopt{display:block;margin:4px 0;cursor:pointer}
+.score{font-size:1.1rem;font-weight:700;color:var(--pri)}
+.mono{color:var(--muted);font-size:.85rem}
+.steps{overflow-wrap:anywhere}
+.katex-display{overflow-x:auto;overflow-y:hidden;max-width:100%;margin:.5em 0}
+.katex-display>.katex{white-space:normal}
+.card{min-width:0}
+</style>
+</head>
+<body class="zh">
+
+<header>
+  <div>
+    <h1><span class="zh">力的合成與分解</span><span class="en">Resultant &amp; Resolving Forces</span></h1>
+    <small><span class="zh">高中物理 · 力學 (DSE) · 合力 resultant force / 拆力 resolving force</span><span class="en">Senior Secondary Physics · Mechanics</span></small>
+  </div>
+  <button class="btn fill" id="langBtn">EN</button>
+</header>
+
+<nav id="nav">
+  <button data-tab="t1" class="on"><span class="zh">① 合力</span><span class="en">① Resultant</span></button>
+  <button data-tab="t2"><span class="zh">② 拆力：兩繩吊物</span><span class="en">② Resolving: two ropes</span></button>
+  <button data-tab="t3"><span class="zh">③ 拆力：斜面</span><span class="en">③ Resolving: incline</span></button>
+  <button data-tab="t4"><span class="zh">④ 小測驗</span><span class="en">④ Quiz</span></button>
+</nav>
+
+<main>
+<!-- ================= TAB 1 ================= -->
+<section class="tab on" id="t1">
+  <div class="concept static">
+    <p><span class="zh"><b>合力 (resultant force)</b>：一個力，它單獨作用的效果與幾枝力同時作用的總效果相同。力是矢量，要同時考慮大小和方向。</span>
+       <span class="en"><b>Resultant force</b>: a single force that has the same effect as several forces acting together. Forces are vectors, so both magnitude and direction matter.</span></p>
+    <p>\[\vec R=\vec F_1+\vec F_2+\cdots+\vec F_n\]</p>
+    <p><span class="zh">拖動箭咀末端的圓點(自動吸附),或在右方輸入大小和角度。格仔紙：<b>1 格 = 1 N</b>。然後按「計算合力」選擇方法。</span>
+       <span class="en">Drag the dot at each arrow tip (it snaps), or type magnitude and angle on the right. Grid: <b>1 square = 1 N</b>. Then press “Find resultant” and choose a method.</span></p>
+  </div>
+  <div class="grid2">
+    <div>
+      <div class="stage"><svg id="svg1" viewBox="0 0 800 560"></svg></div>
+      <div class="toolbar">
+        <span><span class="zh">吸附：</span><span class="en">Snap:</span></span>
+        <select id="snap">
+          <option value="grid">格點 / grid point (1 N)</option>
+          <option value="angle">0.5 N + 5°</option>
+          <option value="free">自由 / free</option>
+        </select>
+        <button class="btn small" id="addF"><span class="zh">＋ 加一枝力</span><span class="en">+ Add force</span></button>
+        <button class="btn small" id="rndF"><span class="zh">🎲 隨機</span><span class="en">🎲 Random</span></button>
+        <button class="btn small" id="rstF"><span class="zh">↺ 還原</span><span class="en">↺ Reset</span></button>
+      </div>
+    </div>
+    <div class="card">
+      <h3><span class="zh">各力(角度由 +x 軸逆時針量度)</span><span class="en">Forces (angle anticlockwise from +x axis)</span></h3>
+      <table class="ft" id="ftable"></table>
+      <div class="toolbar">
+        <button class="btn fill" id="calcBtn"><span class="zh">計算合力 ▶</span><span class="en">Find resultant ▶</span></button>
+        <span id="mctl" class="hidden toolbar" style="margin:0">
+          <button class="btn small" id="mPrev">◀</button>
+          <button class="btn small" id="mNext"><span class="zh">下一步</span><span class="en">Next</span></button>
+          <button class="btn small" id="mAll"><span class="zh">全部顯示</span><span class="en">Show all</span></button>
+          <button class="btn small" id="mClear"><span class="zh">清除</span><span class="en">Clear</span></button>
+        </span>
+      </div>
+      <div class="steps" id="steps1"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TAB 2 ================= -->
+<section class="tab" id="t2">
+  <div class="concept static">
+    <p><span class="zh"><b>拆力 (resolving a force)</b>：把一個力拆成互相垂直的兩個分力(分量)，通常是水平和垂直。物體靜止 ⇒ 合力為零 ⇒ 水平、垂直方向<b>各自</b>平衡。</span>
+       <span class="en"><b>Resolving a force</b>: split one force into two perpendicular components, usually horizontal and vertical. At rest ⇒ resultant is zero ⇒ forces balance <b>separately</b> horizontally and vertically.</span></p>
+    <p>\[F_x=F\cos\theta,\qquad F_y=F\sin\theta\qquad(\theta\text{ 由水平量度 / measured from the horizontal})\]</p>
+    <p><span class="zh"><b>口訣</b>：角 θ 的<b>鄰邊</b>用 <span class="sw cos">\(\cos\theta\)</span>，<b>對邊</b>用 <span class="sw sin">\(\sin\theta\)</span>。θ 若由垂直線量度，兩者互換！</span>
+       <span class="en"><b>Rule</b>: the side <b>adjacent</b> to θ uses <span class="sw cos">\(\cos\theta\)</span>; the side <b>opposite</b> uses <span class="sw sin">\(\sin\theta\)</span>. If θ is measured from the vertical, they swap!</span></p>
+  </div>
+  <div class="grid2">
+    <div>
+      <div class="stage" id="stage2"><svg id="svg2" viewBox="0 0 800 560"></svg><div id="ov2"></div></div>
+      <div class="legend">
+        <span class="sw cos"><span class="zh">鄰邊 adjacent → cos</span><span class="en">adjacent → cos</span></span>
+        <span class="sw sin"><span class="zh">對邊 opposite → sin</span><span class="en">opposite → sin</span></span>
+        <span><span class="zh">斜邊 = 該繩的張力</span><span class="en">hypotenuse = the rope's tension</span></span>
+      </div>
+    </div>
+    <div class="card">
+      <h3><span class="zh">調整條件</span><span class="en">Adjust</span></h3>
+      <div class="row"><span class="zh">θ 由…量度：</span><span class="en">θ measured from:</span>
+        <span class="seg" id="mode2"><button data-m="h" class="on"><span class="zh">水平線</span><span class="en">horizontal</span></button><button data-m="v"><span class="zh">垂直線</span><span class="en">vertical</span></button></span></div>
+      <div class="row static"><label>\(\theta_1\) = <b id="o21"></b>°</label><input type="range" id="s21" min="10" max="80" step="5"></div>
+      <div class="row static"><label>\(\theta_2\) = <b id="o22"></b>°</label><input type="range" id="s22" min="10" max="80" step="5"></div>
+      <div class="row static"><label>\(m\) = <b id="o2m"></b> kg</label><input type="range" id="s2m" min="1" max="10" step="0.5"></div>
+      <div class="mono static"><span class="zh">取 \(g=10\ \text{m s}^{-2}\),重量 \(W=mg\)。</span><span class="en">Take \(g=10\ \text{m s}^{-2}\), weight \(W=mg\).</span></div>
+      <div class="toolbar">
+        <button class="btn fill" id="h2"><span class="zh">💡 下一個提示</span><span class="en">💡 Next hint</span></button>
+        <button class="btn small" id="h2r"><span class="zh">重設提示</span><span class="en">Reset hints</span></button>
+      </div>
+      <div class="steps" id="steps2"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TAB 3 ================= -->
+<section class="tab" id="t3">
+  <div class="concept static">
+    <p><span class="zh">斜面問題：取兩條軸 —— <b>沿斜面</b>和<b>垂直斜面</b>。重量 \(W\) 向下，要拆成這兩個方向。</span>
+       <span class="en">Incline problems: choose two axes — <b>along the incline</b> and <b>perpendicular to it</b>. Weight \(W\) points down and must be resolved along these axes.</span></p>
+    <p><span class="zh"><b>關鍵</b>：斜面傾角 \(\theta\) 剛好等於 \(W\) 與「斜面法線」的夾角。所以 <b>垂直斜面</b>的分量是 θ 的鄰邊 → <span class="sw cos">\(W\cos\theta\)</span>；<b>沿斜面</b>的分量是對邊 → <span class="sw sin">\(W\sin\theta\)</span>。</span>
+       <span class="en"><b>Key</b>: the incline angle \(\theta\) equals the angle between \(W\) and the normal to the surface. So the <b>perpendicular</b> component is adjacent → <span class="sw cos">\(W\cos\theta\)</span>; the component <b>along</b> the slope is opposite → <span class="sw sin">\(W\sin\theta\)</span>.</span></p>
+  </div>
+  <div class="grid2">
+    <div>
+      <div class="stage" id="stage3"><svg id="svg3" viewBox="0 0 800 580"></svg><div id="ov3"></div></div>
+      <div class="legend">
+        <span class="sw cos"><span class="zh">鄰邊 adjacent → cos</span><span class="en">adjacent → cos</span></span>
+        <span class="sw sin"><span class="zh">對邊 opposite → sin</span><span class="en">opposite → sin</span></span>
+      </div>
+    </div>
+    <div class="card">
+      <h3><span class="zh">選擇處境</span><span class="en">Choose a situation</span></h3>
+      <div class="seg" id="scSel" style="flex-direction:column;align-items:stretch">
+        <button data-s="1" class="on"><span class="zh">① 光滑斜面，平行斜面的繩拉住</span><span class="en">① Smooth incline, rope parallel to slope</span></button>
+        <button data-s="2"><span class="zh">② 粗糙斜面，物體靜止</span><span class="en">② Rough incline, block at rest</span></button>
+        <button data-s="3"><span class="zh">③ 光滑斜面，水平力推住</span><span class="en">③ Smooth incline, held by a horizontal push</span></button>
+      </div>
+      <div class="row static" style="margin-top:12px"><label>\(\theta\) = <b id="o3t"></b>°</label><input type="range" id="s3t" min="10" max="60" step="5"></div>
+      <div class="row static"><label>\(m\) = <b id="o3m"></b> kg</label><input type="range" id="s3m" min="1" max="10" step="0.5"></div>
+      <div class="row" id="rsRow">
+        <label><input type="checkbox" id="cW" checked> <span class="zh">拆 W</span><span class="en">Resolve W</span></label>
+        <label id="cFlab" class="hidden"><input type="checkbox" id="cF"> <span class="zh">拆 F</span><span class="en">Resolve F</span></label>
+      </div>
+      <div class="toolbar">
+        <button class="btn fill" id="h3"><span class="zh">💡 下一個提示</span><span class="en">💡 Next hint</span></button>
+        <button class="btn small" id="h3r"><span class="zh">重設提示</span><span class="en">Reset hints</span></button>
+      </div>
+      <div class="steps" id="steps3"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TAB 4 ================= -->
+<section class="tab" id="t4">
+  <div class="toolbar" style="margin:0 0 8px">
+    <span class="score" id="score"></span>
+    <button class="btn fill" id="newRound"><span class="zh">🔄 新一輪題目</span><span class="en">🔄 New round</span></button>
+    <span class="mono"><span class="zh">計算題答案可保留一位小數(誤差 ±0.15 內都接受);取 \(g=10\ \text{m s}^{-2}\)。</span><span class="en">Numerical answers: 1 d.p. (±0.15 accepted); take \(g=10\ \text{m s}^{-2}\).</span></span>
+  </div>
+  <div id="quizList"></div>
+</section>
+</main>
+
+<!-- Modal -->
+<div class="modal hidden" id="modal">
+  <div class="mbox">
+    <h2><span class="zh">選擇求合力的方法</span><span class="en">Choose a method</span></h2>
+    <div class="opts">
+      <button class="opt" data-method="A">
+        <b><span class="zh">A　首尾相連法</span><span class="en">A　Tip-to-tail method</span></b>
+        <span class="d"><span class="zh">把力逐枝平移，尾接箭咀，最後由起點連到終點。用格仔紙數格最直觀。</span><span class="en">Move each force so its tail meets the previous tip; the resultant joins start to end. Easy to read off the grid.</span></span>
+      </button>
+      <button class="opt" data-method="B">
+        <b><span class="zh">B　分量抵銷法</span><span class="en">B　Components method</span></b>
+        <span class="d"><span class="zh">每枝力拆成 x、y 分量，同方向相加、相反方向抵銷，最後用勾股定理合成。</span><span class="en">Resolve every force into x and y components, add / cancel along each axis, then combine with Pythagoras.</span></span>
+      </button>
+    </div>
+    <div style="text-align:right;margin-top:14px"><button class="btn small" id="mClose"><span class="zh">取消</span><span class="en">Cancel</span></button></div>
+  </div>
+</div>
+
+<script>
+/* ============ helpers ============ */
+const $=id=>document.getElementById(id);
+const M=(s,d)=>window.katex?katex.renderToString(s,{throwOnError:false,displayMode:!!d}):s;
+const MD=s=>M(s,true);
+const T=(zh,en)=>`<span class="zh">${zh}</span><span class="en">${en}</span>`;
+const R2D=180/Math.PI, D2R=Math.PI/180;
+const fx=(x,d=1)=>{let v=(+x).toFixed(d); if(/^-0(\.0+)?$/.test(v)) v=v.slice(1); return v;};
+const sg=x=>(x<-0.049?'-':'+')+fx(Math.abs(x));
+const par=x=>x<-0.049?`(${fx(x)})`:fx(x);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const L=(zh,en,tex)=>`<div class="line">${T(zh,en)} ${M(tex)}</div>`;
+
+function svgPt(svg,e){const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;return pt.matrixTransform(svg.getScreenCTM().inverse());}
+function arrow(x1,y1,x2,y2,c,w=4,o={}){
+  const dx=x2-x1,dy=y2-y1,Ln=Math.hypot(dx,dy); if(Ln<2) return '';
+  const ux=dx/Ln,uy=dy/Ln,hl=Math.min(10+w*1.6,Ln*0.6),hw=hl*0.42;
+  const bx=x2-ux*hl,by=y2-uy*hl;
+  const op=o.op==null?1:o.op;
+  return `<line x1="${x1}" y1="${y1}" x2="${bx}" y2="${by}" stroke="${c}" stroke-width="${w}" stroke-linecap="round" opacity="${op}" ${o.dash?`stroke-dasharray="${o.dash}"`:''}/>`+
+         `<polygon points="${x2},${y2} ${bx-uy*hw},${by+ux*hw} ${bx+uy*hw},${by-ux*hw}" fill="${c}" opacity="${op}"/>`;
+}
+function arcPath(cx,cy,r,a1,a2){ // degrees, math orientation (y up)
+  const p=a=>[cx+r*Math.cos(a*D2R),cy-r*Math.sin(a*D2R)];
+  const [x1,y1]=p(a1),[x2,y2]=p(a2);
+  return `M${x1},${y1} A${r},${r} 0 0 ${a2>a1?0:1} ${x2},${y2}`;
+}
+const chip=(x,y,cls,html,W=800,H=560)=>`<div class="chip ${cls}" style="left:${x/W*100}%;top:${y/H*100}%">${html}</div>`;
+const lines=(a)=>a.join('');
+
+/* ============ TAB 1 : resultant ============ */
+const COLORS=['#ef4444','#2563eb','#16a34a','#f59e0b'];
+const DEF=[{x:5,y:0},{x:2,y:4},{x:-3,y:-1}];
+let forces=DEF.map(f=>({...f})), method=null, step=0, snapMode='grid', drag=null;
+const O={x:400,y:280},U=40;
+const sx=x=>O.x+U*x, sy=y=>O.y-U*y;
+const magF=f=>Math.hypot(f.x,f.y);
+const angF=f=>{let a=Math.atan2(f.y,f.x)*R2D; if(a<0)a+=360; if(a>359.95)a=0; return a;};
+function clampV(x,y){const s=Math.min(1,9.4/Math.max(Math.abs(x),1e-9),6.4/Math.max(Math.abs(y),1e-9));return [x*s,y*s];}
+function setTip(i,x,y){
+  [x,y]=clampV(x,y);
+  if(snapMode==='grid'){x=Math.round(x);y=Math.round(y);}
+  else if(snapMode==='angle'){let F=Math.max(0.5,Math.round(Math.hypot(x,y)*2)/2),a=Math.round(Math.atan2(y,x)*R2D/5)*5;x=F*Math.cos(a*D2R);y=F*Math.sin(a*D2R);[x,y]=clampV(x,y);}
+  else {x=Math.round(x*10)/10;y=Math.round(y*10)/10;}
+  if(Math.abs(x)<1e-9&&Math.abs(y)<1e-9) return;
+  forces[i].x=x;forces[i].y=y;
+}
+function maxStep(){return method==='A'?forces.length+1:3;}
+function buildTable(){
+  let h=`<tr><th></th><th>${T('大小 (N)','Magnitude (N)')}</th><th>${T('角度 (°)','Angle (°)')}</th><th></th></tr>`;
+  forces.forEach((f,i)=>{
+    h+=`<tr><td style="text-align:left"><span class="dot" style="background:${COLORS[i]}"></span>${M('F_'+(i+1))}</td>
+    <td><input type="number" id="fm${i}" step="0.5" min="0.5" max="11" data-i="${i}" data-k="m"></td>
+    <td><input type="number" id="fa${i}" step="5" min="0" max="360" data-i="${i}" data-k="a"></td>
+    <td>${forces.length>2?`<button class="btn small" data-del="${i}">✕</button>`:''}</td></tr>`;
+  });
+  $('ftable').innerHTML=h; updateInputs();
+}
+function updateInputs(){
+  forces.forEach((f,i)=>{
+    const m=$('fm'+i),a=$('fa'+i);
+    if(m&&document.activeElement!==m) m.value=fx(magF(f));
+    if(a&&document.activeElement!==a) a.value=fx(angF(f));
+  });
+}
+function finishHTML(Rx,Ry){
+  const Rm=Math.hypot(Rx,Ry);
+  if(Rm<0.05) return `<div class="ok">${T('合力為零 ⇒ 物體處於<b>平衡</b>(equilibrium)','Resultant is zero ⇒ the object is in <b>equilibrium</b>')}</div>`+MD(String.raw`\vec R=\vec 0`);
+  const phi=Math.atan2(Math.abs(Ry),Math.abs(Rx))*R2D;
+  let th=Math.atan2(Ry,Rx)*R2D; if(th<0)th+=360;
+  const hz=Rx>0.05?['右','right']:Rx<-0.05?['左','left']:null, vt=Ry>0.05?['上','up']:Ry<-0.05?['下','down']:null;
+  const dzh=(hz&&vt)?`指向${hz[0]}${vt[0]}方`:`指向${(hz||vt)[0]}方`;
+  const den=(hz&&vt)?`pointing ${vt[1]}-${hz[1]}`:`pointing ${(hz||vt)[1]}`;
+  let h=MD(String.raw`R=\sqrt{R_x^{\,2}+R_y^{\,2}}=\sqrt{(${fx(Rx)})^2+(${fx(Ry)})^2}=${fx(Rm)}\ \text{N}`);
+  if(hz&&vt) h+=MD(String.raw`\varphi=\tan^{-1}\left|\frac{R_y}{R_x}\right|=\tan^{-1}\frac{${fx(Math.abs(Ry))}}{${fx(Math.abs(Rx))}}=${fx(phi)}^\circ`);
+  h+=`<div class="ans">${T(`合力大小 <b>${fx(Rm)} N</b>，${dzh}`+(hz&&vt?`，與水平線成 <b>${fx(phi)}°</b>(由 +x 軸逆時針 ${fx(th)}°)`:''),
+                          `Resultant: <b>${fx(Rm)} N</b>, ${den}`+(hz&&vt?`, <b>${fx(phi)}°</b> to the horizontal (${fx(th)}° anticlockwise from +x)`:''))}</div>`;
+  return h;
+}
+function steps1(Rx,Ry){
+  const n=forces.length; let h='';
+  if(!method){return `<div class="mono">${T('按「計算合力」，選擇首尾相連法或分量抵銷法。','Press “Find resultant” and choose a method.')}</div>`;}
+  if(method==='A'){
+    h+=`<div class="ttl">${T('A　首尾相連法','A　Tip-to-tail')}</div>`;
+    if(step===0) h+=`<div class="line">${T('把每枝力平移(大小方向不變)，令下一枝的「尾」接上前一枝的「箭咀」。按「下一步」開始。','Translate each force (same size and direction) so each tail meets the previous tip. Press “Next” to start.')}</div>`;
+    let px=0,py=0;
+    for(let k=0;k<Math.min(step,n);k++){
+      const f=forces[k]; px+=f.x;py+=f.y;
+      h+=`<div class="line">${M(`\\vec F_{${k+1}}`)}：${T(`${f.x>=0?'向右':'向左'} ${fx(Math.abs(f.x))} 格，${f.y>=0?'向上':'向下'} ${fx(Math.abs(f.y))} 格`,`${fx(Math.abs(f.x))} square${Math.abs(f.x)==1?'':'s'} ${f.x>=0?'right':'left'}, ${fx(Math.abs(f.y))} ${f.y>=0?'up':'down'}`)} ${M(String.raw`\Rightarrow\ P_{${k+1}}=(${fx(px)},\ ${fx(py)})`)}</div>`;
+    }
+    if(step>n){
+      h+=`<div class="ttl">${T('由起點連到終點 = 合力','Start → end = resultant')}</div>`;
+      h+=MD(String.raw`\vec R=\sum\vec F=(R_x,\ R_y)=(${fx(Rx)},\ ${fx(Ry)})\ \text{N}`);
+      h+=finishHTML(Rx,Ry);
+    }
+  } else {
+    h+=`<div class="ttl">${T('B　分量抵銷法','B　Components method')}</div>`;
+    if(step===0) h+=`<div class="line">${T('先把每枝力拆成水平 (x) 和垂直 (y) 分量，右、上為正。按「下一步」。','First resolve every force into x and y components (right and up are positive). Press “Next”.')}</div>`;
+    if(step>=1){
+      h+=`<div class="line">${T('① 拆力(角度 α 由 +x 軸量度，符號自動表示方向)：','① Resolve (α from +x axis; the sign gives the direction):')}</div>`;
+      forces.forEach((f,i)=>{
+        h+=`<div class="line">${M(String.raw`F_{${i+1}x}=F_{${i+1}}\cos\alpha_{${i+1}}=${fx(magF(f))}\cos ${fx(angF(f))}^\circ=${sg(f.x)}`)}<br>${M(String.raw`F_{${i+1}y}=F_{${i+1}}\sin\alpha_{${i+1}}=${fx(magF(f))}\sin ${fx(angF(f))}^\circ=${sg(f.y)}`)}</div>`;
+      });
+    }
+    if(step>=2){
+      const rp=forces.reduce((s,f)=>s+Math.max(f.x,0),0), rl=forces.reduce((s,f)=>s+Math.max(-f.x,0),0);
+      const up=forces.reduce((s,f)=>s+Math.max(f.y,0),0), dn=forces.reduce((s,f)=>s+Math.max(-f.y,0),0);
+      h+=`<div class="line">${T('② 同方向相加，相反方向抵銷：','② Add along the same direction, cancel opposites:')}</div>`;
+      h+=MD(String.raw`R_x=\sum F_x=${forces.map(f=>par(f.x)).join('+')}=${sg(Rx)}\ \text{N}`);
+      h+=`<div class="line">${T(`x 方向：向右共 ${fx(rp)} N，向左共 ${fx(rl)} N → 抵銷後${Rx>=0?'向右':'向左'} ${fx(Math.abs(Rx))} N`,`x: ${fx(rp)} N right, ${fx(rl)} N left → net ${fx(Math.abs(Rx))} N to the ${Rx>=0?'right':'left'}`)}</div>`;
+      h+=MD(String.raw`R_y=\sum F_y=${forces.map(f=>par(f.y)).join('+')}=${sg(Ry)}\ \text{N}`);
+      h+=`<div class="line">${T(`y 方向：向上共 ${fx(up)} N，向下共 ${fx(dn)} N → 抵銷後${Ry>=0?'向上':'向下'} ${fx(Math.abs(Ry))} N`,`y: ${fx(up)} N up, ${fx(dn)} N down → net ${fx(Math.abs(Ry))} N ${Ry>=0?'up':'down'}`)}</div>`;
+    }
+    if(step>=3){
+      h+=`<div class="line">${T('③ 把 R_x、R_y 合成(勾股定理)：','③ Combine R_x and R_y (Pythagoras):')}</div>`+finishHTML(Rx,Ry);
+    }
+  }
+  return h;
+}
+function render1(){
+  const n=forces.length; let Rx=0,Ry=0; forces.forEach(f=>{Rx+=f.x;Ry+=f.y;});
+  let xmin=-10,xmax=10,ymin=-7,ymax=7;
+  const ext=(x,y)=>{xmin=Math.min(xmin,Math.floor(x)-1);xmax=Math.max(xmax,Math.ceil(x)+1);ymin=Math.min(ymin,Math.floor(y)-1);ymax=Math.max(ymax,Math.ceil(y)+1);};
+  ext(Rx,Ry); forces.forEach(f=>ext(f.x,f.y));
+  if(method==='A'){let a=0,b=0;forces.forEach(f=>{a+=f.x;b+=f.y;ext(a,b);});}
+  {const w=xmax-xmin,h=ymax-ymin;if(w/h>10/7){const e=w*0.7-h;ymin-=e/2;ymax+=e/2;}else{const e=h/0.7-w;xmin-=e/2;xmax+=e/2;}}
+  const gx0=Math.floor(xmin),gx1=Math.ceil(xmax),gy0=Math.floor(ymin),gy1=Math.ceil(ymax);
+  const k=(xmax-xmin)/20, tk=k>1.6?4:2;
+  let s='';
+  for(let i=gx0;i<=gx1;i++) s+=`<line x1="${sx(i)}" y1="${sy(gy1)}" x2="${sx(i)}" y2="${sy(gy0)}" stroke="${i%5==0?'#c3d0e2':'#e6edf6'}" stroke-width="${(i%5==0?1.6:1)*k}"/>`;
+  for(let j=gy0;j<=gy1;j++) s+=`<line x1="${sx(gx0)}" y1="${sy(j)}" x2="${sx(gx1)}" y2="${sy(j)}" stroke="${j%5==0?'#c3d0e2':'#e6edf6'}" stroke-width="${(j%5==0?1.6:1)*k}"/>`;
+  s+=`<line x1="${sx(gx0)}" y1="${O.y}" x2="${sx(gx1)}" y2="${O.y}" stroke="#475569" stroke-width="${2*k}"/><line x1="${O.x}" y1="${sy(gy1)}" x2="${O.x}" y2="${sy(gy0)}" stroke="#475569" stroke-width="${2*k}"/>`;
+  for(let i=Math.ceil(xmin+1);i<=Math.floor(xmax-1);i++) if(i&&i%tk==0) s+=`<text x="${sx(i)}" y="${O.y+17*k}" font-size="${13*k}" fill="#64748b" text-anchor="middle">${i}</text>`;
+  for(let j=Math.ceil(ymin+1);j<=Math.floor(ymax-1);j++) if(j&&j%tk==0) s+=`<text x="${O.x-7*k}" y="${sy(j)+4*k}" font-size="${13*k}" fill="#64748b" text-anchor="end">${j}</text>`;
+  s+=`<text x="${sx(xmax)-16*k}" y="${O.y-8*k}" font-size="${16*k}" fill="#475569" text-anchor="end" font-style="italic">x</text><text x="${O.x+10*k}" y="${sy(ymax)+18*k}" font-size="${16*k}" fill="#475569" font-style="italic">y</text><circle cx="${O.x}" cy="${O.y}" r="${4*k}" fill="#0f172a"/>`;
+  const op=method&&step>0?(method==='A'?0.28:0.55):1;
+  forces.forEach((f,i)=>{s+=arrow(sx(0),sy(0),sx(f.x),sy(f.y),COLORS[i],5,{op});});
+  if(method==='A'&&step>0){
+    let px=0,py=0;
+    for(let k=0;k<Math.min(step,n);k++){
+      const f=forces[k],nx=px+f.x,ny=py+f.y;
+      s+=arrow(sx(px),sy(py),sx(nx),sy(ny),COLORS[k],5);
+      const mx=sx((px+nx)/2),my=sy((py+ny)/2);
+      s+=`<text x="${mx}" y="${my-10}" font-size="17" font-weight="700" fill="${COLORS[k]}" text-anchor="middle" stroke="#fff" stroke-width="4" paint-order="stroke">F<tspan font-size="12" dy="4">${k+1}</tspan></text>`;
+      px=nx;py=ny;
+    }
+    if(step>n){
+      s+=arrow(sx(0),sy(0),sx(px),sy(py),'#0f172a',7);
+      s+=`<text x="${(sx(0)+sx(px))/2-18}" y="${(sy(0)+sy(py))/2-6}" font-size="24" font-weight="800" fill="#0f172a" stroke="#fff" stroke-width="5" paint-order="stroke">R</text>`;
+    }
+  }
+  if(method==='B'){
+    if(step>=1) forces.forEach((f,i)=>{
+      s+=`<line x1="${sx(f.x)}" y1="${sy(f.y)}" x2="${sx(f.x)}" y2="${sy(0)}" stroke="${COLORS[i]}" stroke-width="2" stroke-dasharray="3 5"/><line x1="${sx(f.x)}" y1="${sy(f.y)}" x2="${sx(0)}" y2="${sy(f.y)}" stroke="${COLORS[i]}" stroke-width="2" stroke-dasharray="3 5"/>`;
+      s+=`<circle cx="${sx(f.x)}" cy="${sy(0)}" r="5" fill="${COLORS[i]}"/><circle cx="${sx(0)}" cy="${sy(f.y)}" r="5" fill="${COLORS[i]}"/>`;
+    });
+    if(step>=2){ s+=arrow(sx(0),sy(0),sx(Rx),sy(0),'#475569',7,{op:.85})+arrow(sx(0),sy(0),sx(0),sy(Ry),'#475569',7,{op:.85});
+      s+=`<text x="${sx(Rx/2)}" y="${sy(0)+(Ry>=0?30:-14)}" font-size="17" font-weight="700" fill="#334155" text-anchor="middle" stroke="#fff" stroke-width="4" paint-order="stroke">R<tspan font-size="12" dy="4">x</tspan></text>`;
+      s+=`<text x="${sx(0)+(Rx>=0?-30:30)}" y="${sy(Ry/2)}" font-size="17" font-weight="700" fill="#334155" text-anchor="middle" stroke="#fff" stroke-width="4" paint-order="stroke">R<tspan font-size="12" dy="4">y</tspan></text>`; }
+    if(step>=3){
+      s+=`<line x1="${sx(Rx)}" y1="${sy(0)}" x2="${sx(Rx)}" y2="${sy(Ry)}" stroke="#0f172a" stroke-width="2" stroke-dasharray="6 5"/><line x1="${sx(0)}" y1="${sy(Ry)}" x2="${sx(Rx)}" y2="${sy(Ry)}" stroke="#0f172a" stroke-width="2" stroke-dasharray="6 5"/>`;
+      s+=arrow(sx(0),sy(0),sx(Rx),sy(Ry),'#0f172a',7);
+      s+=`<text x="${(sx(0)+sx(Rx))/2-18}" y="${(sy(0)+sy(Ry))/2-6}" font-size="24" font-weight="800" fill="#0f172a" stroke="#fff" stroke-width="5" paint-order="stroke">R</text>`;
+    }
+  }
+  forces.forEach((f,i)=>{
+    const m=magF(f),ux=f.x/m,uy=f.y/m;
+    s+=`<circle class="h" data-i="${i}" cx="${sx(f.x)}" cy="${sy(f.y)}" r="20" fill="transparent" style="cursor:grab"/><circle cx="${sx(f.x)}" cy="${sy(f.y)}" r="9" fill="#fff" stroke="${COLORS[i]}" stroke-width="4" pointer-events="none"/>`;
+    s+=`<text x="${sx(f.x)+ux*28}" y="${sy(f.y)-uy*28+5}" font-size="19" font-weight="700" fill="${COLORS[i]}" text-anchor="middle" stroke="#fff" stroke-width="4" paint-order="stroke" pointer-events="none">F<tspan font-size="13" dy="4">${i+1}</tspan></text>`;
+  });
+  $('svg1').setAttribute('viewBox',`${sx(xmin)} ${sy(ymax)} ${(xmax-xmin)*U} ${(ymax-ymin)*U}`);
+  $('svg1').innerHTML=s;
+  $('steps1').innerHTML=steps1(Rx,Ry);
+  $('mctl').classList.toggle('hidden',!method);
+  $('mPrev').disabled=step<=0; $('mNext').disabled=step>=maxStep(); $('addF').disabled=n>=4;
+}
+function initTab1(){
+  const svg=$('svg1');
+  buildTable(); render1();
+  svg.addEventListener('pointerdown',e=>{const h=e.target.closest('[data-i]');if(!h)return;drag=+h.dataset.i;e.preventDefault();});
+  window.addEventListener('pointermove',e=>{if(drag==null)return;const p=svgPt(svg,e);setTip(drag,(p.x-O.x)/U,(O.y-p.y)/U);updateInputs();render1();});
+  window.addEventListener('pointerup',()=>{drag=null;});
+  $('snap').addEventListener('change',e=>{snapMode=e.target.value;forces.forEach((f,i)=>setTip(i,f.x,f.y));updateInputs();render1();});
+  $('ftable').addEventListener('input',e=>{
+    const t=e.target; if(!t.dataset.k)return; const i=+t.dataset.i;
+    const m=parseFloat($('fm'+i).value),a=parseFloat($('fa'+i).value); if(isNaN(m)||isNaN(a)||m<=0)return;
+    let x=m*Math.cos(a*D2R),y=m*Math.sin(a*D2R); [x,y]=clampV(x,y); forces[i].x=Math.round(x*1e6)/1e6; forces[i].y=Math.round(y*1e6)/1e6; render1();
+  });
+  $('ftable').addEventListener('click',e=>{const d=e.target.closest('[data-del]');if(!d)return;forces.splice(+d.dataset.del,1);step=Math.min(step,maxStep());buildTable();render1();});
+  $('addF').onclick=()=>{if(forces.length>=4)return;forces.push(pick([{x:-2,y:3},{x:3,y:-2},{x:-4,y:-2},{x:1,y:-4}]));buildTable();render1();};
+  $('rndF').onclick=()=>{forces=forces.map(()=>{let x,y;do{x=ri(-6,6);y=ri(-5,5);}while(!x&&!y);return {x,y};});step=0;if(snapMode!=='grid'){}updateInputs();render1();};
+  $('rstF').onclick=()=>{forces=DEF.map(f=>({...f}));method=null;step=0;buildTable();render1();};
+  $('calcBtn').onclick=()=>$('modal').classList.remove('hidden');
+  $('mClose').onclick=()=>$('modal').classList.add('hidden');
+  $('modal').addEventListener('click',e=>{if(e.target.id==='modal')$('modal').classList.add('hidden');});
+  document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{method=b.dataset.method;step=0;$('modal').classList.add('hidden');render1();});
+  $('mNext').onclick=()=>{step=Math.min(step+1,maxStep());render1();};
+  $('mPrev').onclick=()=>{step=Math.max(step-1,0);render1();};
+  $('mAll').onclick=()=>{step=maxStep();render1();};
+  $('mClear').onclick=()=>{method=null;step=0;render1();};
+}
+
+/* ============ TAB 2 : two ropes ============ */
+let mode2='h',a1=40,a2=50,m2=3,st2=0;
+const ROLE={sin:'#16a34a',cos:'#f97316'};
+function corner(cx,cy,hx,vy){return `<path d="M${cx+hx*11},${cy} L${cx+hx*11},${cy+vy*11} L${cx},${cy+vy*11}" fill="none" stroke="#64748b" stroke-width="1.8"/>`;}
+function render2(){
+  const al=a1*D2R,be=a2*D2R,W=m2*10;
+  const T1=W*Math.cos(be)/Math.sin(al+be),T2=W*Math.cos(al)/Math.sin(al+be);
+  const Op={x:400,y:300},LR=230;
+  const A={x:Op.x-LR*Math.cos(al),y:Op.y-LR*Math.sin(al)},B={x:Op.x+LR*Math.cos(be),y:Op.y-LR*Math.sin(be)};
+  const s=140/Math.max(T1,T2,W);
+  const P1={x:Op.x-s*T1*Math.cos(al),y:Op.y-s*T1*Math.sin(al)},P2={x:Op.x+s*T2*Math.cos(be),y:Op.y-s*T2*Math.sin(be)},Pw={x:Op.x,y:Op.y+s*W};
+  const hRole=mode2==='h'?'cos':'sin', vRole=mode2==='h'?'sin':'cos';
+  const d1=mode2==='h'?a1:90-a1,d2=mode2==='h'?a2:90-a2;
+  let g='',ov='';
+  g+=`<rect width="800" height="560" fill="#fff"/>`;
+  // reference line
+  if(mode2==='h') g+=`<line x1="${Op.x-110}" y1="${Op.y}" x2="${Op.x+110}" y2="${Op.y}" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 5"/>`;
+  else g+=`<line x1="${Op.x}" y1="${Op.y-130}" x2="${Op.x}" y2="${Op.y}" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 5"/>`;
+  // ropes + anchors
+  g+=`<line x1="${A.x}" y1="${A.y}" x2="${Op.x}" y2="${Op.y}" stroke="#a16207" stroke-width="4" stroke-linecap="round"/><line x1="${B.x}" y1="${B.y}" x2="${Op.x}" y2="${Op.y}" stroke="#a16207" stroke-width="4" stroke-linecap="round"/>`;
+  [A,B].forEach(p=>{g+=`<circle cx="${p.x}" cy="${p.y}" r="11" fill="#cbd5e1" stroke="#475569" stroke-width="3"/><circle cx="${p.x}" cy="${p.y}" r="3" fill="#475569"/>`;});
+  // string + mass
+  g+=`<line x1="${Op.x}" y1="${Op.y}" x2="${Op.x}" y2="${Op.y+150}" stroke="#94a3b8" stroke-width="3"/><rect x="${Op.x-48}" y="${Op.y+150}" width="96" height="62" rx="9" fill="#e0e7ff" stroke="#6366f1" stroke-width="3"/><text x="${Op.x}" y="${Op.y+188}" font-size="21" font-weight="700" fill="#3730a3" text-anchor="middle">${fx(m2)} kg</text>`;
+  // components
+  const comps=(P,sideL,idx)=>{
+    const hx=Math.sign(Op.x-P.x),vy=Math.sign(P.y-Op.y)||1;
+    g+=`<line x1="${Op.x}" y1="${Op.y}" x2="${P.x}" y2="${Op.y}" stroke="${ROLE[hRole]}" stroke-width="5" stroke-dasharray="8 5"/>`;
+    g+=`<line x1="${P.x}" y1="${Op.y}" x2="${P.x}" y2="${P.y}" stroke="${ROLE[vRole]}" stroke-width="5" stroke-dasharray="8 5"/>`;
+    g+=corner(P.x,Op.y,hx,vy>0?1:-1);
+    const dsp=idx===1?'\\theta_1':'\\theta_2', Tn=`T_${idx}`;
+    ov+=chip(Op.x+(sideL?-1:1)*Math.max(Math.abs(Op.x-P.x)/2,80),Op.y+30,hRole,M(`${Tn}${hRole==='cos'?'\\cos':'\\sin'}${dsp}`));
+    ov+=chip(P.x+(sideL?-92:92),(Op.y+P.y)/2,vRole,M(`${Tn}${vRole==='cos'?'\\cos':'\\sin'}${dsp}`));
+  };
+  comps(P1,true,1); comps(P2,false,2);
+  // force arrows
+  g+=arrow(Op.x,Op.y,P1.x,P1.y,'#ef4444',6)+arrow(Op.x,Op.y,P2.x,P2.y,'#2563eb',6)+arrow(Op.x,Op.y,Pw.x,Pw.y,'#7c3aed',6);
+  g+=`<circle cx="${Op.x}" cy="${Op.y}" r="6" fill="#0f172a"/>`;
+  ov+=chip(P1.x+32,P1.y-20,'plain',`<span style="color:#ef4444">${M('T_1')}</span>`);
+  ov+=chip(P2.x-32,P2.y-20,'plain',`<span style="color:#2563eb">${M('T_2')}</span>`);
+  ov+=chip(Pw.x+48,(Op.y+Pw.y)/2+8,'plain',`<span style="color:#7c3aed">${M('W=mg')}</span>`);
+  // angle arcs
+  const arcs=(left)=>{
+    let a_from,a_to;
+    if(mode2==='h'){a_from=left?180:0;a_to=left?180-a1:a2;}
+    else{a_from=90;a_to=left?180-a1:a2;}
+    const r=46; g+=`<path d="${arcPath(Op.x,Op.y,r,a_from,a_to)}" fill="none" stroke="#334155" stroke-width="2.5"/>`;
+    const mid=(a_from+a_to)/2,rr=70;
+    ov+=chip(Op.x+rr*Math.cos(mid*D2R),Op.y-rr*Math.sin(mid*D2R),'plain',M(left?'\\theta_1':'\\theta_2'));
+  };
+  arcs(true);arcs(false);
+  $('svg2').innerHTML=g; $('ov2').innerHTML=ov;
+  // panel
+  $('o21').textContent=d1;$('o22').textContent=d2;$('o2m').textContent=fx(m2);
+  $('s21').value=d1;$('s22').value=d2;$('s2m').value=m2;
+  $('steps2').innerHTML=steps2(W,T1,T2,d1,d2);
+  $('h2').disabled=st2>=4;
+}
+function steps2(W,T1,T2,d1,d2){
+  const fnx=mode2==='h'?'\\cos':'\\sin',fny=mode2==='h'?'\\sin':'\\cos';
+  const al=a1*D2R,be=a2*D2R,kx1=Math.cos(al),kx2=Math.cos(be),ky1=Math.sin(al),ky2=Math.sin(be);
+  let h=`<div class="note">${T('💡 物體<b>靜止</b> ⇒ 合力 = 0 ⇒ 水平方向、垂直方向<b>分別</b>平衡。','💡 The mass is <b>at rest</b> ⇒ resultant = 0 ⇒ balance <b>separately</b> horizontally and vertically.')}</div>`;
+  if(st2>=1){
+    h+=`<div class="ttl">${T('步驟 1　拆力：看清 θ 夾在哪兩邊','Step 1　Resolve: which sides does θ lie between?')}</div>`;
+    h+=MD(String.raw`\begin{aligned}T_{1x}&=T_1${fnx}\theta_1,&T_{1y}&=T_1${fny}\theta_1\\T_{2x}&=T_2${fnx}\theta_2,&T_{2y}&=T_2${fny}\theta_2\end{aligned}`);
+    h+=`<div class="line">${T(`θ 由${mode2==='h'?'水平線':'垂直線'}量度 ⇒ ${mode2==='h'?'水平分量是鄰邊 (cos)，垂直分量是對邊 (sin)':'垂直分量是鄰邊 (cos)，水平分量是對邊 (sin)'}。`,`θ is from the ${mode2==='h'?'horizontal':'vertical'} ⇒ ${mode2==='h'?'horizontal is adjacent (cos), vertical is opposite (sin)':'vertical is adjacent (cos), horizontal is opposite (sin)'}.`)}</div>`;
+  }
+  if(st2>=2){
+    h+=`<div class="ttl">${T('步驟 2　水平方向平衡','Step 2　Horizontal balance')}</div>`;
+    h+=MD(String.raw`\Sigma F_x=0:\quad T_1${fnx}\theta_1=T_2${fnx}\theta_2`);
+  }
+  if(st2>=3){
+    h+=`<div class="ttl">${T('步驟 3　垂直方向平衡','Step 3　Vertical balance')}</div>`;
+    h+=MD(String.raw`\Sigma F_y=0:\quad T_1${fny}\theta_1+T_2${fny}\theta_2=W=mg`);
+  }
+  if(st2>=4){
+    const r=kx1/kx2;
+    h+=`<div class="ttl">${T('步驟 4　代入數值，解聯立方程','Step 4　Substitute and solve')}</div>`;
+    h+=MD(String.raw`W=mg=${fx(m2)}\times10=${fx(W)}\ \text{N}`);
+    h+=MD(String.raw`\text{(2)}\ \ T_1${fnx}${d1}^\circ=T_2${fnx}${d2}^\circ\ \Rightarrow\ T_2=\frac{${fx(kx1,3)}}{${fx(kx2,3)}}T_1=${fx(r,3)}\,T_1`);
+    h+=MD(String.raw`\text{(3)}\ \ T_1(${fx(ky1,3)})+(${fx(r,3)}\,T_1)(${fx(ky2,3)})=${fx(W)}\ \Rightarrow\ T_1=\frac{${fx(W)}}{${fx(ky1+r*ky2,3)}}`);
+    h+=`<div class="ans">${MD(String.raw`T_1=${fx(T1)}\ \text{N},\qquad T_2=${fx(T2)}\ \text{N}`)}</div>`;
+  }
+  return h;
+}
+function initTab2(){
+  $('mode2').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;mode2=b.dataset.m;document.querySelectorAll('#mode2 button').forEach(x=>x.classList.toggle('on',x===b));render2();});
+  $('s21').oninput=e=>{const v=+e.target.value;a1=mode2==='h'?v:90-v;render2();};
+  $('s22').oninput=e=>{const v=+e.target.value;a2=mode2==='h'?v:90-v;render2();};
+  $('s2m').oninput=e=>{m2=+e.target.value;render2();};
+  $('h2').onclick=()=>{st2=Math.min(st2+1,4);render2();};
+  $('h2r').onclick=()=>{st2=0;render2();};
+  render2();
+}
+
+/* ============ TAB 3 : incline ============ */
+let sc=1,th3=30,m3=3,st3=0;
+function render3(){
+  const th=th3*D2R,c=Math.cos(th),sn=Math.sin(th),W=m3*10;
+  let N=W*c,Tq=0,fq=0,Fq=0;
+  if(sc===1)Tq=W*sn; if(sc===2)fq=W*sn; if(sc===3){Fq=W*Math.tan(th);N=W/c;}
+  const u={x:c,y:-sn},nn={x:-sn,y:-c};
+  const P0={x:80,y:430},Ls=470,E={x:P0.x+Ls*c,y:P0.y-Ls*sn};
+  const C={x:P0.x+250*u.x+22*nn.x,y:P0.y+250*u.y+22*nn.y};
+  const s=185/Math.max(W,N,Tq,fq,Fq);
+  const W3=580,H3=580;
+  let g=`<rect width="800" height="580" fill="#fff"/>`,ov='';
+  g+=`<line x1="30" y1="${P0.y}" x2="770" y2="${P0.y}" stroke="#94a3b8" stroke-width="3"/>`;
+  g+=`<polygon points="${P0.x},${P0.y} ${E.x},${E.y} ${E.x},${P0.y}" fill="#eef2f7" stroke="#94a3b8" stroke-width="2"/>`;
+  if(sc===2){
+    let pts='';const N2=46;for(let k=0;k<=N2;k++){const d=k*Ls/N2,o=(k%2?3.5:-3.5);pts+=`${P0.x+d*u.x+o*nn.x},${P0.y+d*u.y+o*nn.y} `;}
+    g+=`<polyline points="${pts}" fill="none" stroke="#7c2d12" stroke-width="3"/>`;
+  } else g+=`<line x1="${P0.x}" y1="${P0.y}" x2="${E.x}" y2="${E.y}" stroke="#334155" stroke-width="4"/>`;
+  const lbl=sc===2?T('粗糙','rough'):T('光滑','smooth');
+  ov+=chip(P0.x+400*u.x-45*nn.x,P0.y+400*u.y-45*nn.y+10,'plain',`<span style="color:#475569">${lbl}</span>`,W3+220,H3);
+  // rope
+  if(sc===1){
+    const e1={x:C.x+36*u.x,y:C.y+36*u.y},e2={x:P0.x+(Ls-8)*u.x+22*nn.x,y:P0.y+(Ls-8)*u.y+22*nn.y};
+    g+=`<line x1="${e1.x}" y1="${e1.y}" x2="${e2.x}" y2="${e2.y}" stroke="#a16207" stroke-width="4"/><circle cx="${e2.x}" cy="${e2.y}" r="7" fill="#cbd5e1" stroke="#475569" stroke-width="3"/>`;
+  }
+  // block
+  g+=`<g transform="translate(${C.x},${C.y}) rotate(${-th3})"><rect x="-36" y="-22" width="72" height="44" rx="6" fill="#fde68a" fill-opacity=".85" stroke="#d97706" stroke-width="3"/><text x="0" y="5" font-size="15" font-weight="700" fill="#92400e" text-anchor="middle">${fx(m3)} kg</text></g>`;
+  // theta at corner
+  g+=`<path d="${arcPath(P0.x,P0.y,85,0,th3)}" fill="none" stroke="#334155" stroke-width="2.5"/>`;
+  ov+=chip(P0.x+118*Math.cos(th/2),P0.y-118*Math.sin(th/2),'plain',M('\\theta'),800,580);
+  // forces
+  const fl=[{k:'W',c:'#7c3aed',v:{x:0,y:1},m:W},{k:'N',c:'#0ea5e9',v:nn,m:N}];
+  if(sc===1)fl.push({k:'T',c:'#ef4444',v:u,m:Tq});
+  if(sc===2)fl.push({k:'f',c:'#ef4444',v:u,m:fq});
+  if(sc===3)fl.push({k:'F',c:'#f59e0b',v:{x:1,y:0},m:Fq});
+  // component constructions (under arrows)
+  const un=(v)=>{const l=Math.hypot(v.x,v.y);return {x:v.x/l,y:v.y/l};};
+  const dashL=(x1,y1,x2,y2,col,w)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${col}" stroke-width="${w}" stroke-dasharray="8 5"/>`;
+  const dashEdge=(x1,y1,x2,y2)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4 5"/>`;
+  if($('cW').checked){
+    const a={x:-u.x*s*W*sn,y:-u.y*s*W*sn},b={x:-nn.x*s*W*c,y:-nn.y*s*W*c};
+    const tip={x:C.x,y:C.y+s*W};
+    g+=dashEdge(tip.x,tip.y,C.x+a.x,C.y+a.y)+dashEdge(tip.x,tip.y,C.x+b.x,C.y+b.y);
+    g+=dashL(C.x,C.y,C.x+a.x,C.y+a.y,ROLE.sin,5)+dashL(C.x,C.y,C.x+b.x,C.y+b.y,ROLE.cos,5);
+    g+=`<path d="${arcPath(C.x,C.y,40,-90,-90+th3)}" fill="none" stroke="#334155" stroke-width="2.5"/>`;
+    const mid=(-90+(-90+th3))/2;
+    ov+=chip(C.x+66*Math.cos(mid*D2R),C.y-66*Math.sin(mid*D2R),'plain',M('\\theta'),800,580);
+    ov+=chip(C.x+a.x/2+38*nn.x,C.y+a.y/2+38*nn.y,'sin',M(String.raw`W\sin\theta`),800,580);
+    ov+=chip(C.x+b.x/2+46*u.x,C.y+b.y/2+46*u.y,'cos',M(String.raw`W\cos\theta`),800,580);
+  }
+  if(sc===3&&$('cF').checked){
+    const Fv={x:Fq*s,y:0},cv={x:u.x*s*Fq*c,y:u.y*s*Fq*c},dv={x:-nn.x*s*Fq*sn,y:-nn.y*s*Fq*sn};
+    const tip={x:C.x+Fv.x,y:C.y};
+    g+=dashEdge(tip.x,tip.y,C.x+cv.x,C.y+cv.y)+dashEdge(tip.x,tip.y,C.x+dv.x,C.y+dv.y);
+    g+=dashL(C.x,C.y,C.x+cv.x,C.y+cv.y,ROLE.cos,5)+dashL(C.x,C.y,C.x+dv.x,C.y+dv.y,ROLE.sin,5);
+    g+=`<path d="${arcPath(C.x,C.y,52,0,th3)}" fill="none" stroke="#334155" stroke-width="2.5"/>`;
+    ov+=chip(C.x+80*Math.cos(th/2),C.y-80*Math.sin(th/2),'plain',M('\\theta'),800,580);
+    ov+=chip(C.x+cv.x/2+40*nn.x,C.y+cv.y/2+40*nn.y,'cos',M(String.raw`F\cos\theta`),800,580);
+    ov+=chip(C.x+dv.x/2-50*u.x,C.y+dv.y/2-50*u.y,'sin',M(String.raw`F\sin\theta`),800,580);
+  }
+  fl.forEach(f=>{
+    const tx=C.x+f.v.x*s*f.m,ty=C.y+f.v.y*s*f.m;
+    g+=arrow(C.x,C.y,tx,ty,f.c,6);
+    const off=f.k==='W'?{x:20,y:14}:{x:f.v.x*22+(f.k==='F'?6:0),y:f.v.y*22};
+    ov+=chip(tx+off.x,ty+off.y,'plain',`<span style="color:${f.c}">${M(f.k)}</span>`,800,580);
+  });
+  g+=`<circle cx="${C.x}" cy="${C.y}" r="5" fill="#0f172a"/>`;
+  $('svg3').innerHTML=g;
+  // overlay uses 800x580 box; chip() was passed W/H explicitly, fix chip percent base for those with 800 default
+  $('ov3').innerHTML=ov.replace(/left:([\d.]+)%;top:([\d.]+)%/g,(m,l,t)=>m);
+  $('o3t').textContent=th3;$('o3m').textContent=fx(m3);$('s3t').value=th3;$('s3m').value=m3;
+  $('cFlab').classList.toggle('hidden',sc!==3);
+  $('steps3').innerHTML=steps3(W,N,Tq,fq,Fq);
+  $('h3').disabled=st3>=4;
+}
+function steps3(W,N,Tq,fq,Fq){
+  const th=th3*D2R;
+  let h=`<div class="note">${T('💡 物體靜止 ⇒ 「沿斜面」和「垂直斜面」兩個方向的合力<b>都是零</b>。','💡 At rest ⇒ the net force is zero <b>both along and perpendicular</b> to the incline.')}</div>`;
+  if(st3>=1){
+    h+=`<div class="ttl">${T('步驟 1　拆力','Step 1　Resolve')}</div>`;
+    h+=`<div class="line">${T('W 沿斜面向下的分量：','Component of W down the slope:')}${M(String.raw`W_{\parallel}=W\sin\theta`)}</div><div class="line">${T('W 垂直斜面(壓入斜面)的分量：','Component of W perpendicular to the slope:')}${M(String.raw`W_{\perp}=W\cos\theta`)}</div>`;
+    if(sc===3) h+=`<div class="line">${T('F 沿斜面向上的分量：','Component of F up the slope:')}${M(String.raw`F_{\parallel}=F\cos\theta`)}</div><div class="line">${T('F 垂直斜面(壓入斜面)的分量：','Component of F perpendicular to the slope:')}${M(String.raw`F_{\perp}=F\sin\theta`)}</div>`;
+    h+=`<div class="line">${T('θ 在 W 與斜面法線之間 ⇒ 垂直斜面用 cos，沿斜面用 sin。','θ lies between W and the normal ⇒ perpendicular uses cos, along-slope uses sin.')}${sc===3?T(' 對 F：θ 在 F 與斜面之間 ⇒ 沿斜面用 cos，垂直斜面用 sin。',' For F: θ lies between F and the slope ⇒ along-slope uses cos, perpendicular uses sin.'):''}</div>`;
+  }
+  if(st3>=2){
+    h+=`<div class="ttl">${T('步驟 2　沿斜面方向平衡','Step 2　Balance along the incline')}</div>`;
+    if(sc===1) h+=MD(String.raw`T-W\sin\theta=0\ \Rightarrow\ T=W\sin\theta`);
+    if(sc===2) h+=MD(String.raw`f-W\sin\theta=0\ \Rightarrow\ f=W\sin\theta`);
+    if(sc===3) h+=MD(String.raw`F\cos\theta-W\sin\theta=0\ \Rightarrow\ F=W\tan\theta`);
+  }
+  if(st3>=3){
+    h+=`<div class="ttl">${T('步驟 3　垂直斜面方向平衡','Step 3　Balance perpendicular to the incline')}</div>`;
+    if(sc===3) h+=MD(String.raw`N-W\cos\theta-F\sin\theta=0\ \Rightarrow\ N=W\cos\theta+W\tan\theta\sin\theta=\frac{W}{\cos\theta}`);
+    else h+=MD(String.raw`N-W\cos\theta=0\ \Rightarrow\ N=W\cos\theta`);
+  }
+  if(st3>=4){
+    h+=`<div class="ttl">${T('步驟 4　代入數值','Step 4　Substitute numbers')}</div>`;
+    h+=MD(String.raw`W=mg=${fx(m3)}\times10=${fx(W)}\ \text{N}`);
+    if(sc===1) h+=`<div class="ans">${MD(String.raw`T=${fx(W)}\sin${th3}^\circ=${fx(Tq)}\ \text{N},\qquad N=${fx(W)}\cos${th3}^\circ=${fx(N)}\ \text{N}`)}</div>`;
+    if(sc===2) h+=`<div class="ans">${MD(String.raw`f=${fx(W)}\sin${th3}^\circ=${fx(fq)}\ \text{N},\qquad N=${fx(W)}\cos${th3}^\circ=${fx(N)}\ \text{N}`)}${MD(String.raw`\mu_s\ge\frac{f}{N}=\tan\theta=${fx(Math.tan(th),2)}`)}<div class="line">${T('斜面要有足夠摩擦：靜摩擦係數至少為 tan θ。','The surface needs enough friction: the coefficient of static friction must be at least tan θ.')}</div></div>`;
+    if(sc===3) h+=`<div class="ans">${MD(String.raw`F=${fx(W)}\tan${th3}^\circ=${fx(Fq)}\ \text{N},\qquad N=\frac{${fx(W)}}{\cos${th3}^\circ}=${fx(N)}\ \text{N}`)}</div>`;
+  }
+  return h;
+}
+function initTab3(){
+  $('scSel').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;sc=+b.dataset.s;st3=0;document.querySelectorAll('#scSel button').forEach(x=>x.classList.toggle('on',x===b));render3();});
+  $('s3t').oninput=e=>{th3=+e.target.value;render3();};
+  $('s3m').oninput=e=>{m3=+e.target.value;render3();};
+  $('cW').onchange=()=>{if($('cW').checked)$('cF').checked=false;render3();};$('cF').onchange=()=>{if($('cF').checked)$('cW').checked=false;render3();};
+  $('h3').onclick=()=>{st3=Math.min(st3+1,4);render3();};
+  $('h3r').onclick=()=>{st3=0;render3();};
+  render3();
+}
+
+/* ============ TAB 4 : quiz ============ */
+const TR=[[3,4,5],[6,8,10],[5,12,13],[8,6,10],[9,12,15],[12,5,13]];
+function qPerp(){const [a,b,r]=pick(TR);
+  return {zh:`兩個互相垂直的力作用於同一點：${M(a+String.raw`\ \text{N}`)} 向東，${M(b+String.raw`\ \text{N}`)} 向北。求合力的大小。`,
+          en:`Two perpendicular forces act at a point: ${M(a+String.raw`\ \text{N}`)} east and ${M(b+String.raw`\ \text{N}`)} north. Find the magnitude of the resultant.`,
+          ans:r,unit:'N',sol:MD(String.raw`R=\sqrt{${a}^2+${b}^2}=${r}\ \text{N}`)};}
+function qCol(){const [p,q,r]=pick(TR.slice(0,3)),e1=ri(1,4),e2=ri(1,4);
+  const N=v=>M(v+String.raw`\ \text{N}`);
+  return {zh:`一質點受四個力：${N(p+e1)} 向右、${N(e1)} 向左、${N(q+e2)} 向上、${N(e2)} 向下。求合力的大小。`,
+          en:`A particle is acted on by four forces: ${N(p+e1)} right, ${N(e1)} left, ${N(q+e2)} up, ${N(e2)} down. Find the magnitude of the resultant.`,
+          ans:r,unit:'N',sol:MD(String.raw`R_x=${p+e1}-${e1}=${p},\quad R_y=${q+e2}-${e2}=${q},\quad R=\sqrt{${p}^2+${q}^2}=${r}\ \text{N}`)};}
+function qRes(fromV){const F=pick([20,30,40,50,60,80]),th=pick([30,37,45,53,60]),ax=pick(['x','y']);
+  // from horizontal: x=cos,y=sin ; from vertical: x=sin,y=cos
+  const useCos=fromV?(ax==='y'):(ax==='x'), ans=+(F*(useCos?Math.cos(th*D2R):Math.sin(th*D2R))).toFixed(1);
+  const fn=useCos?String.raw`\cos`:String.raw`\sin`;
+  const axZh=ax==='x'?'水平':'垂直',axEn=ax==='x'?'horizontal':'vertical';
+  return {zh:`一個 ${M(F+String.raw`\ \text{N}`)} 的力與${fromV?'垂直線':'水平線'}成 ${M(th+String.raw`^\circ`)} 角。求它的<b>${axZh}分量</b>。`,
+          en:`A ${M(F+String.raw`\ \text{N}`)} force makes an angle of ${M(th+String.raw`^\circ`)} with the ${fromV?'vertical':'horizontal'}. Find its <b>${axEn} component</b>.`,
+          ans,unit:'N',sol:`<div class="line">${T(fromV?'θ 由垂直線量度：垂直分量是鄰邊 (cos)，水平分量是對邊 (sin)。':'θ 由水平線量度：水平分量是鄰邊 (cos)，垂直分量是對邊 (sin)。',fromV?'θ is from the vertical: vertical is adjacent (cos), horizontal is opposite (sin).':'θ is from the horizontal: horizontal is adjacent (cos), vertical is opposite (sin).')}</div>`+MD(String.raw`F_${ax}=F${fn}\theta=${F}${fn}${th}^\circ=${fx(ans)}\ \text{N}`)};}
+function qRope(){const m=pick([2,3,4,5,6,8]),th=pick([30,37,45,53,60]),ans=+(m*10/(2*Math.sin(th*D2R))).toFixed(1);
+  return {zh:`質量 ${M(m+String.raw`\ \text{kg}`)} 的物體由兩條對稱的繩吊起，每條繩與水平線成 ${M(th+String.raw`^\circ`)}。求每條繩的張力。(取 ${M(String.raw`g=10\ \text{m s}^{-2}`)})`,
+          en:`A ${M(m+String.raw`\ \text{kg}`)} mass hangs from two symmetric ropes, each at ${M(th+String.raw`^\circ`)} to the horizontal. Find the tension in each rope. (Take ${M(String.raw`g=10\ \text{m s}^{-2}`)})`,
+          ans,unit:'N',sol:MD(String.raw`2T\sin\theta=mg\ \Rightarrow\ T=\frac{mg}{2\sin\theta}=\frac{${m}\times10}{2\sin${th}^\circ}=${fx(ans)}\ \text{N}`)};}
+function qInc(){const m=pick([2,3,4,5,6,8]),th=pick([20,30,37,45,53]),asT=Math.random()<.5;
+  const ans=+(m*10*(asT?Math.sin(th*D2R):Math.cos(th*D2R))).toFixed(1);
+  return {zh:`質量 ${M(m+String.raw`\ \text{kg}`)} 的物體靜止在傾角 ${M(th+String.raw`^\circ`)} 的光滑斜面上，由一條平行斜面的繩拉住。求${asT?'繩的張力':'斜面的正向力'}。(取 ${M(String.raw`g=10\ \text{m s}^{-2}`)})`,
+          en:`A ${M(m+String.raw`\ \text{kg}`)} block rests on a smooth incline of ${M(th+String.raw`^\circ`)}, held by a rope parallel to the slope. Find the ${asT?'tension in the rope':'normal reaction'}. (Take ${M(String.raw`g=10\ \text{m s}^{-2}`)})`,
+          ans,unit:'N',sol:MD(asT?String.raw`T=mg\sin\theta=${m}\times10\times\sin${th}^\circ=${fx(ans)}\ \text{N}`:String.raw`N=mg\cos\theta=${m}\times10\times\cos${th}^\circ=${fx(ans)}\ \text{N}`)};}
+function qMcq(){
+  const v=pick([0,1,2]);
+  const cases=[
+   {zh:`一個力 ${M('F')} 與<b>垂直線</b>成 ${M(String.raw`\theta`)} 角，它的<b>水平分量</b>是：`,en:`A force ${M('F')} makes angle ${M(String.raw`\theta`)} with the <b>vertical</b>. Its <b>horizontal component</b> is:`,ok:String.raw`F\sin\theta`},
+   {zh:`重量 ${M('W')} 的物體在傾角 ${M(String.raw`\theta`)} 的斜面上，重量<b>沿斜面</b>的分量是：`,en:`A weight ${M('W')} rests on an incline of angle ${M(String.raw`\theta`)}. The component of the weight <b>along the slope</b> is:`,ok:String.raw`W\sin\theta`},
+   {zh:`重量 ${M('W')} 的物體在傾角 ${M(String.raw`\theta`)} 的斜面上，重量<b>垂直斜面</b>的分量是：`,en:`A weight ${M('W')} rests on an incline of angle ${M(String.raw`\theta`)}. The component of the weight <b>perpendicular to the slope</b> is:`,ok:String.raw`W\cos\theta`}];
+  const c=cases[v],base=c.ok[0];
+  const opts=[String.raw`${base}\sin\theta`,String.raw`${base}\cos\theta`,String.raw`${base}\tan\theta`,String.raw`\frac{${base}}{\sin\theta}`];
+  const idx=opts.indexOf(c.ok), order=[0,1,2,3].sort(()=>Math.random()-.5);
+  return {zh:c.zh,en:c.en,mcq:order.map(i=>opts[i]),correct:order.indexOf(idx),
+          sol:`<div class="line">${T('看 θ 夾在哪兩條邊之間：鄰邊 cos，對邊 sin。','Check which two sides θ lies between: adjacent → cos, opposite → sin.')}</div>`+MD(c.ok)};}
+let quiz=[],qdone=[];
+function newRound(){quiz=[qPerp(),qCol(),qRes(false),qRes(true),qRope(),qInc(),qMcq()];qdone=quiz.map(()=>false);renderQuiz();}
+function renderQuiz(){
+  let h='';
+  quiz.forEach((q,i)=>{
+    h+=`<div class="qcard" id="qc${i}"><div class="qhead">Q${i+1}</div><div>${T(q.zh,q.en)}</div><div class="row">`;
+    if(q.mcq) h+=q.mcq.map((o,k)=>`<label class="qopt"><input type="radio" name="qr${i}" value="${k}"> ${M(o)}</label>`).join('');
+    else h+=`<input type="number" step="any" id="qi${i}"> ${q.unit}`;
+    h+=`<button class="btn small fill" onclick="checkQ(${i})">${T('檢查','Check')}</button><button class="btn small" onclick="solQ(${i})">${T('解答','Solution')}</button></div><div id="qf${i}"></div><div id="qs${i}" class="hidden">${q.sol}</div></div>`;
+  });
+  $('quizList').innerHTML=h; updScore();
+}
+function updScore(){const n=qdone.filter(Boolean).length;$('score').innerHTML=T(`得分：${n} / ${quiz.length}`,`Score: ${n} / ${quiz.length}`);}
+function checkQ(i){
+  const q=quiz[i];let ok=false,empty=false;
+  if(q.mcq){const r=document.querySelector(`input[name=qr${i}]:checked`);if(!r)empty=true;else ok=(+r.value===q.correct);}
+  else{const v=parseFloat($('qi'+i).value);if(isNaN(v))empty=true;else ok=Math.abs(v-q.ans)<=0.15;}
+  const card=$('qc'+i),fb=$('qf'+i);
+  if(empty){fb.innerHTML=`<div class="note">${T('請先作答。','Please answer first.')}</div>`;return;}
+  card.classList.toggle('good',ok);card.classList.toggle('bad',!ok);
+  if(ok&&!qdone[i]){qdone[i]=true;updScore();}
+  fb.innerHTML=ok?`<div class="ok">${T('✔ 正確！','✔ Correct!')}</div>`:`<div class="note">${T('✘ 再試試，或按「解答」。','✘ Try again, or press “Solution”.')}</div>`;
+}
+function solQ(i){const s=$('qs'+i);s.classList.toggle('hidden');if(!s.classList.contains('hidden')&&!quiz[i].mcq&&!s.dataset.a){s.insertAdjacentHTML('beforeend',`<div class="ans">${T('答案','Answer')}：${fx(quiz[i].ans)} ${quiz[i].unit}</div>`);s.dataset.a=1;}}
+
+/* ============ init ============ */
+function renderStatic(){
+  if(!window.renderMathInElement) return;
+  document.querySelectorAll('.static').forEach(el=>renderMathInElement(el,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false}));
+}
+function showTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.id===id));
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===id));
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  renderStatic();
+  $('nav').addEventListener('click',e=>{const b=e.target.closest('button');if(b)showTab(b.dataset.tab);});
+  $('langBtn').onclick=()=>{const en=document.body.classList.contains('zh');document.body.className=en?'en':'zh';document.documentElement.lang=en?'en':'zh-HK';$('langBtn').textContent=en?'中文':'EN';try{localStorage.setItem('forcesLang',en?'en':'zh');}catch(e){}};
+  try{if(localStorage.getItem('forcesLang')==='en')$('langBtn').click();}catch(e){}
+  initTab1();initTab2();initTab3();
+  $('newRound').onclick=newRound;newRound();
+});
+</script>
+</body>
+</html>
